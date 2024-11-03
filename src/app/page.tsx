@@ -326,7 +326,9 @@ export default function Home() {
                                     size="lg"
                                     onClick={() => {
                                         window.location.href =
-                                            '/storybook/?path=/docs/introduction-introduction--docs'
+                                            process.env
+                                                .NEXT_PUBLIC_STORYBOOK_URL +
+                                            '?path=/docs/introduction-introduction--docs'
                                     }}
                                 >
                                     View Stories
