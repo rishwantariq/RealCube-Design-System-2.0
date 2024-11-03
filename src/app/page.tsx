@@ -324,10 +324,10 @@ export default function Home() {
                             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
                                 <Button
                                     size="lg"
-                                    onClick={() =>
-                                        (window.location.href =
-                                            'http://localhost:6006/?path=/docs/introduction-introduction--docs')
-                                    }
+                                    onClick={() => {
+                                        window.location.href =
+                                            '/storybook/?path=/docs/introduction-introduction--docs'
+                                    }}
                                 >
                                     View Stories
                                 </Button>
