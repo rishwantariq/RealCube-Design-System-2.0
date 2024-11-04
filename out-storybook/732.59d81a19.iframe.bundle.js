@@ -31806,13 +31806,11 @@
                 ...'0123456789'
                     .split('')
                     .map((c) => ({ code: `Digit${c}`, key: c })),
-                ...')!@#$%^&*('
-                    .split('')
-                    .map((c, i) => ({
-                        code: `Digit${i}`,
-                        key: c,
-                        shiftKey: !0,
-                    })),
+                ...')!@#$%^&*('.split('').map((c, i) => ({
+                    code: `Digit${i}`,
+                    key: c,
+                    shiftKey: !0,
+                })),
                 ...'abcdefghijklmnopqrstuvwxyz'
                     .split('')
                     .map((c) => ({ code: `Key${c.toUpperCase()}`, key: c })),

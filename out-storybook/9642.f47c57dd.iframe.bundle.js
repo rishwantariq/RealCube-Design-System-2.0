@@ -2832,21 +2832,19 @@
                                             ? _value
                                             : !table.getIsAllColumnsVisible()),
                                         table.setColumnVisibility(
-                                            table
-                                                .getAllLeafColumns()
-                                                .reduce(
-                                                    (obj, column) => ({
-                                                        ...obj,
-                                                        [column.id]:
-                                                            value ||
-                                                            !(
-                                                                null !=
-                                                                    column.getCanHide &&
-                                                                column.getCanHide()
-                                                            ),
-                                                    }),
-                                                    {},
-                                                ),
+                                            table.getAllLeafColumns().reduce(
+                                                (obj, column) => ({
+                                                    ...obj,
+                                                    [column.id]:
+                                                        value ||
+                                                        !(
+                                                            null !=
+                                                                column.getCanHide &&
+                                                            column.getCanHide()
+                                                        ),
+                                                }),
+                                                {},
+                                            ),
                                         )
                                 }),
                                 (table.getIsAllColumnsVisible = () =>

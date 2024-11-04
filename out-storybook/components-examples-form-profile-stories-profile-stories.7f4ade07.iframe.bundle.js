@@ -70,11 +70,9 @@
                     urls: lib
                         .IX(
                             lib.Ry({
-                                value: lib
-                                    .Z_()
-                                    .url({
-                                        message: 'Please enter a valid URL.',
-                                    }),
+                                value: lib.Z_().url({
+                                    message: 'Please enter a valid URL.',
+                                }),
                             }),
                         )
                         .optional(),

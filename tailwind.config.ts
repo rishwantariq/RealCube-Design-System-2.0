@@ -55,6 +55,55 @@ const config = {
                     DEFAULT: 'hsl(var(--card))',
                     foreground: 'hsl(var(--card-foreground))',
                 },
+                success: {
+                    DEFAULT: 'hsl(var(--success))',
+                    foreground: 'hsl(var(--success-foreground))',
+                },
+                failure: {
+                    DEFAULT: 'hsl(var(--failure))',
+                    foreground: 'hsl(var(--failure-foreground))',
+                },
+                warning: {
+                    DEFAULT: 'hsl(var(--warning))',
+                    foreground: 'hsl(var(--warning-foreground))',
+                },
+                info: {
+                    DEFAULT: 'hsl(var(--info))',
+                    foreground: 'hsl(var(--info-foreground))',
+                },
+                result: {
+                    DEFAULT: 'hsl(var(--result))',
+                    foreground: 'hsl(var(--result-foreground))',
+                },
+                action: {
+                    DEFAULT: 'hsl(var(--action))',
+                    foreground: 'hsl(var(--action-foreground))',
+                },
+                tertiary: {
+                    DEFAULT: 'hsl(var(--tertiary))',
+                    foreground: 'hsl(var(--tertiary-foreground))',
+                },
+                status: {
+                    DEFAULT: 'hsl(var(--status))',
+                    foreground: 'hsl(var(--status-foreground))',
+                },
+                sidebar: {
+                    background: 'hsl(var(--sidebar-background))',
+                    foreground: 'hsl(var(--sidebar-foreground))',
+                    primary: 'hsl(var(--sidebar-primary))',
+                    primaryForeground: 'hsl(var(--sidebar-primary-foreground))',
+                    accent: 'hsl(var(--sidebar-accent))',
+                    accentForeground: 'hsl(var(--sidebar-accent-foreground))',
+                    border: 'hsl(var(--sidebar-border))',
+                    ring: 'hsl(var(--sidebar-ring))',
+                },
+                chart: {
+                    1: 'hsl(var(--chart-1))',
+                    2: 'hsl(var(--chart-2))',
+                    3: 'hsl(var(--chart-3))',
+                    4: 'hsl(var(--chart-4))',
+                    5: 'hsl(var(--chart-5))',
+                },
             },
             borderRadius: {
                 lg: 'var(--radius)',

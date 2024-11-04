@@ -1158,11 +1158,9 @@
                     './node_modules/zod/lib/index.mjs',
                 ),
                 formSchema = zod__WEBPACK_IMPORTED_MODULE_0__.Ry({
-                    username: zod__WEBPACK_IMPORTED_MODULE_0__
-                        .Z_()
-                        .min(2, {
-                            message: 'Username must be at least 2 characters.',
-                        }),
+                    username: zod__WEBPACK_IMPORTED_MODULE_0__.Z_().min(2, {
+                        message: 'Username must be at least 2 characters.',
+                    }),
                 }),
                 FormSchemaCheckbox = zod__WEBPACK_IMPORTED_MODULE_0__.Ry({
                     mobile: zod__WEBPACK_IMPORTED_MODULE_0__
