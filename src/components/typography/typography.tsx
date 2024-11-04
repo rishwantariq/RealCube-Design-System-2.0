@@ -34,7 +34,6 @@ export function TypographyH2({
         >
             {children}
         </h2>
-        
     )
 }
 

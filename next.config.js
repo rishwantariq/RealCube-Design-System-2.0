@@ -1,14 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     async rewrites() {
-      return [
-        {
-          source: '/storybook/:path*',
-          destination: '/out-storybook/:path*',
-        },
-      ]
+        return [
+            {
+                source: '/storybook/:path*',
+                destination: '/out-storybook/:path*',
+            },
+        ]
     },
-  }
-  
-  module.exports = nextConfig
-  
+}
+
+module.exports = nextConfig

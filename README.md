@@ -12,13 +12,13 @@ While private, this system showcases our investment in long-term innovation and 
 
 ## ✨ Key Features
 
-- **📚 Storybook-based Documentation**: Each component is documented with interactive Storybook examples, making it easy to understand and reuse.
-- **🌗 Light & Dark Themes**: Support for light and dark modes, covering both Storybook's UI and component previews.
-- **♿ Accessibility**: Built with [Storybook's accessibility addon](https://storybook.js.org/addons/@storybook/addon-a11y) to ensure compliance with accessibility standards.
-- **🖼️ Global Decorators**: Consistent layouts and functionality across all stories, similar to Next.js's root layout, thanks to Storybook's global decorators.
-- **🎛️ Custom Controls**: Tailored controls for components, allowing interactive testing and customization in Storybook.
-- **🎨 Color Palette and Typography**: Integrated RealCube brand colors and typography for a cohesive look and feel.
-- **🚀 Advanced Components**: Includes specialized components such as configurable sidebars, dynamic forms, and enhanced data tables tailored to RealCube’s needs.
+-   **📚 Storybook-based Documentation**: Each component is documented with interactive Storybook examples, making it easy to understand and reuse.
+-   **🌗 Light & Dark Themes**: Support for light and dark modes, covering both Storybook's UI and component previews.
+-   **♿ Accessibility**: Built with [Storybook's accessibility addon](https://storybook.js.org/addons/@storybook/addon-a11y) to ensure compliance with accessibility standards.
+-   **🖼️ Global Decorators**: Consistent layouts and functionality across all stories, similar to Next.js's root layout, thanks to Storybook's global decorators.
+-   **🎛️ Custom Controls**: Tailored controls for components, allowing interactive testing and customization in Storybook.
+-   **🎨 Color Palette and Typography**: Integrated RealCube brand colors and typography for a cohesive look and feel.
+-   **🚀 Advanced Components**: Includes specialized components such as configurable sidebars, dynamic forms, and enhanced data tables tailored to RealCube’s needs.
 
 ## 🧩 Challenges and Solutions
 
@@ -42,20 +42,18 @@ Some theme styles required manual adjustment due to limitations with CSS variabl
 
 ### Prerequisites
 
-- **Node.js** and **npm** installed on your machine.
-- **Chromatic** (optional) for deploying Storybook.
+-   **Node.js** and **npm** installed on your machine.
+-   **Chromatic** (optional) for deploying Storybook.
 
 ### Installation
 
 Clone the repository and install dependencies:
-
 
 ```bash
 git clone https://codehub.exalogic.co/rishwan97/realcube-2.0-design-system.git
 cd realcube-2.0-design-system
 npm install
 ```
-
 
 ### Development Server
 
@@ -74,7 +72,6 @@ Project Owners: This design system is private and developed solely by the RealCu
 
 ## 📚 Resources
 
-- [Storybook Documentation](https://storybook.js.org/)
-- [ShadCN UI](https://ui.shadcn.com/)
-- [Radix UI](https://www.radix-ui.com/)
-
+-   [Storybook Documentation](https://storybook.js.org/)
+-   [ShadCN UI](https://ui.shadcn.com/)
+-   [Radix UI](https://www.radix-ui.com/)
