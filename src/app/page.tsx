@@ -1,8 +1,17 @@
 'use client'
 
 import * as React from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTheme } from 'next-themes'
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@/components/ui/accordion'
 import {
     Card,
     CardContent,
@@ -10,251 +19,144 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table'
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from '@/components/ui/accordion'
-import { useToast } from '@/components/ui/use-toast'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Slider } from '@/components/ui/slider'
-import { Switch } from '@/components/ui/switch'
-import { Label } from '@/components/ui/label'
-import { Progress } from '@/components/ui/progress'
-import { Separator } from '@/components/ui/separator'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Calendar } from '@/components/ui/calendar'
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover'
-import {
+    MoveRight,
+    PhoneCall,
+    MoveUpRight,
+    MoveDownLeft,
+    Check,
     Moon,
     Sun,
-    Code,
     Palette,
+    Type,
     Zap,
-    AlertTriangle,
-    Info,
-    CheckCircle,
-    Lightbulb,
-    Puzzle,
-    Repeat,
     Shield,
-    Calendar as CalendarIcon,
-    Accessibility,
+    Sparkles,
+    Box,
     Layers,
-    Search,
-    Wand2,
+    Layout,
+    List,
+    Sliders,
+    ToggleLeft,
+    User,
+    PaintBucket,
+    Paintbrush,
+    CheckCheck,
+    Code,
 } from 'lucide-react'
+import {
+    Carousel,
+    CarouselApi,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from '@/components/ui/carousel'
 import { MultiStepLoader } from '@/components/ui/multi-step-loader'
 import { FlipWords } from '@/components/ui/flip-words'
-import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
+import PageContainer from '@/components/ui/page-container'
 import {
     TypographyH1,
     TypographyH2,
     TypographyH3,
     TypographyH4,
     TypographyP,
-    TypographyInlineCode,
     TypographyLead,
-    TypographyLarge,
     TypographySmall,
-    TypographyMuted,
 } from '@/components/typography/typography'
-import { BackgroundBeams } from '@/components/ui/background-beams'
-import { FollowerPointerCard } from '@/components/ui/following-pointer'
-import { ScrollArea } from '@radix-ui/react-scroll-area'
+import { cn } from '@/lib/utils'
+import { Checkbox } from '@radix-ui/react-checkbox'
+import { RadioGroup } from '@radix-ui/react-dropdown-menu'
+import { RadioGroupItem } from '@radix-ui/react-radio-group'
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from '@radix-ui/react-select'
+import { Slider } from '@radix-ui/react-slider'
+import { Switch } from '@radix-ui/react-switch'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@radix-ui/react-tabs'
 import { Input } from '@/components/ui/input'
-import * as LucideIcons from 'lucide-react'
-import { type LucideIcon } from 'lucide-react'
-import { StickyScroll } from '@/components/ui/sticky-scroll-reveal'
-import PageContainer from '@/components/ui/page-container'
-import { TextGenerateEffect } from '@/components/ui/text-generate-effect'
-import { CardStack } from '@/components/ui/card-stack'
+import { Label } from '@/components/ui/label'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
-interface CardItem {
-    id: number
-    name: string
-    designation: string
-    content: React.ReactNode
-}
+const Highlight = ({ children }: { children: React.ReactNode }) => (
+    <span
+        className={cn(
+            'font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-700/[0.2] dark:text-emerald-500 px-1 py-0.5',
+        )}
+    >
+        {children}
+    </span>
+)
 
-// Define the props for the Highlight component
-interface HighlightProps {
-    children: React.ReactNode
-    className?: string
-}
-
-const Highlight = ({ children, className }: HighlightProps) => {
-    return (
-        <span
-            className={cn(
-                'font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-700/[0.2] dark:text-emerald-500 px-1 py-0.5',
-                className,
-            )}
-        >
-            {children}
-        </span>
-    )
-}
-
-function CardStackDemo() {
-    return (
-        <div className="flex w-full h-[15rem] items-center mx-auto justify-center">
-            <CardStack items={CARDS} />
-        </div>
-    )
-}
-
-function ColorSwatch({
-    name,
-    color,
-    textColor,
-}: {
-    name: string
-    color: string
-    textColor: string
-}) {
-    return (
-        <div className={`p-4 rounded-lg ${color} ${textColor}`}>
-            <TypographySmall className="font-semibold">{name}</TypographySmall>
-            <br></br>
-            <TypographySmall className="opacity-80">
-                {color.replace('bg-', '')}
-            </TypographySmall>
-        </div>
-    )
-}
-
-const CARDS: CardItem[] = [
-    {
-        id: 0,
-        name: 'RealCube Design Team',
-        designation: 'Component Architects',
-        content: (
-            <p>
-                Our design system boasts <Highlight>100+ components</Highlight>{' '}
-                built on top of shadcn/ui, providing an extensive, customizable
-                library ready to suit various project needs.
-            </p>
-        ),
-    },
-    {
-        id: 1,
-        name: 'Accessibility Advocates',
-        designation: 'Inclusivity Champions',
-        content: (
-            <p>
-                Every component is meticulously crafted to meet{' '}
-                <Highlight>WCAG 2.1 AA standards</Highlight>, ensuring
-                accessible, inclusive experiences for all users, without
-                compromise.
-            </p>
-        ),
-    },
-    {
-        id: 2,
-        name: 'UX Consistency Experts',
-        designation: 'Experience Designers',
-        content: (
-            <p>
-                Our design system enforces <Highlight>consistent UX</Highlight>{' '}
-                across all platforms, helping teams maintain a cohesive look and
-                feel that users intuitively understand and trust.
-            </p>
-        ),
-    },
-]
+const ColorSwatch = ({ name, color }: { name: string; color: string }) => (
+    <div className="flex flex-col items-center">
+        <div className={`w-16 h-16 rounded-full ${color}`} />
+        <TypographySmall className="mt-2">{name}</TypographySmall>
+    </div>
+)
 
 export default function Home() {
-    const { toast } = useToast()
     const { theme, setTheme } = useTheme()
-    const [date, setDate] = React.useState<Date>()
-    const [showLoader, setShowLoader] = React.useState(false)
+    const [date, setDate] = useState<Date>()
+    const [showLoader, setShowLoader] = useState(false)
+    const [carouselApi, setCarouselApi] = useState<CarouselApi>()
+    const [current, setCurrent] = useState(0)
+    const [titleNumber, setTitleNumber] = useState(0)
 
-    const showToast = () => {
-        toast({
-            title: 'Toast Notification',
-            description: 'This is how our toast notifications look!',
-        })
-    }
+    const titles = useMemo(
+        () => ['powerful', 'flexible', 'accessible', 'modern', 'scalable'],
+        [],
+    )
 
-    const steps = [
-        { text: 'Setting up your RealCube Profile' },
-        { text: 'Loading Data' },
-        { text: 'Defining Workflows' },
-        { text: 'Loading Assets' },
-        { text: 'Setting up Dashboard' },
-        { text: 'Almost done' },
-        { text: 'Welcome to RealCube 2.0' },
-    ]
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            setTitleNumber((prev) =>
+                prev === titles.length - 1 ? 0 : prev + 1,
+            )
+        }, 2000)
+        return () => clearTimeout(timeoutId)
+    }, [titleNumber, titles])
 
-    const words = ` Explore the Realcube design system’s primary typeface: Poppins. Designed for readability, Poppins ensures a visually cohesive and accessible experience across our components and layouts.`
+    useEffect(() => {
+        if (!carouselApi) return
+        const interval = setInterval(() => {
+            if (
+                carouselApi.selectedScrollSnap() + 1 ===
+                carouselApi.scrollSnapList().length
+            ) {
+                setCurrent(0)
+                carouselApi.scrollTo(0)
+            } else {
+                carouselApi.scrollNext()
+                setCurrent(current + 1)
+            }
+        }, 1000)
+        return () => clearInterval(interval)
+    }, [carouselApi, current])
 
-    const content = [
-        {
-            title: 'Heading 1',
-            description:
-                'Large and bold, used for main page titles and primary sections.',
-            content: (
-                <div className="flex items-center justify-center text-5xl font-extrabold text-foreground h-full w-full bg-gradient-to-br from-primary to-primary/90">
-                    <TypographyH1>Heading 1</TypographyH1>
-                </div>
-            ),
-        },
-        {
-            title: 'Heading 2',
-            description:
-                'Section headings with clear hierarchy, ideal for subsections.',
-            content: (
-                <div className="flex items-center justify-center text-4xl font-bold text-foreground h-full w-full bg-gradient-to-br from-secondary to-secondary/90">
-                    <TypographyH2>Heading 2</TypographyH2>
-                </div>
-            ),
-        },
-        {
-            title: 'Heading 3',
-            description:
-                'Subsection titles, smaller than H2 but still prominent.',
-            content: (
-                <div className="flex items-center justify-center text-3xl font-bold text-foreground h-full w-full bg-gradient-to-br from-muted to-muted/90">
-                    <TypographyH3>Heading 3</TypographyH3>
-                </div>
-            ),
-        },
-        {
-            title: 'Body Text',
-            description:
-                'Standard text size for paragraphs and main content areas.',
-            content: (
-                <div className="flex items-center justify-center text-lg text-background h-full w-full bg-gradient-to-br from-accent to-accent/90">
-                    <TypographyP>Body Text</TypographyP>
-                </div>
-            ),
-        },
-        {
-            title: 'Small Text',
-            description: 'Used for captions, notes, and fine print.',
-            content: (
-                <div className="flex items-center justify-center text-sm text-foreground h-full w-full bg-gradient-to-br from-muted-foreground to-muted-foreground/90">
-                    <TypographySmall>Small Text</TypographySmall>
-                </div>
-            ),
-        },
+    useEffect(() => {
+        if (!carouselApi) return
+        const interval = setInterval(() => {
+            carouselApi.scrollNext()
+        }, 3000)
+        return () => clearInterval(interval)
+    }, [carouselApi])
+
+    const componentCategories = [
+        { name: 'Layout', icon: <Layout className="w-6 h-6" /> },
+        { name: 'Forms', icon: <Box className="w-6 h-6" /> },
+        { name: 'Data Display', icon: <List className="w-6 h-6" /> },
+        { name: 'Feedback', icon: <Zap className="w-6 h-6" /> },
+        { name: 'Surfaces', icon: <Layers className="w-6 h-6" /> },
+        { name: 'Navigation', icon: <ToggleLeft className="w-6 h-6" /> },
+        { name: 'Typography', icon: <Type className="w-6 h-6" /> },
+        { name: 'Theming', icon: <Palette className="w-6 h-6" /> },
+        { name: 'Data Input', icon: <Sliders className="w-6 h-6" /> },
+        { name: 'User', icon: <User className="w-6 h-6" /> },
     ]
 
     return (
@@ -262,13 +164,13 @@ export default function Home() {
             <div className="flex flex-col min-h-screen bg-background text-foreground font-sans">
                 <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                     <div className="container flex h-14 items-center justify-between">
-                        <div className="flex items-center space-x-6">
+                        <div className="flex items-center space-x-4">
                             <a className="flex items-center space-x-2" href="/">
                                 <span className="font-bold sm:inline-block">
                                     RealCube Design System
                                 </span>
                             </a>
-                            <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+                            <nav className="hidden md:flex items-center space-x-4 text-sm font-medium">
                                 <a
                                     className="transition-colors hover:text-foreground/80 text-foreground/60"
                                     href="#features"
@@ -307,711 +209,823 @@ export default function Home() {
                             ) : (
                                 <Sun className="h-5 w-5" />
                             )}
+                            <span className="sr-only">Toggle theme</span>
                         </Button>
                     </div>
                 </header>
-                <main className="flex-1">
-                    <section className="relative overflow-hidden py-24 md:py-32 lg:py-40">
-                        <BackgroundBeams />
-                        <div className="container relative z-10 text-center">
-                            <TypographyH1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl mb-6">
-                                RealCube 2.0 Design System
-                            </TypographyH1>
-                            <TypographyLead className="max-w-2xl mx-auto mb-8">
-                                Build projects with an intuitive, consistent,
-                                and powerful design system.
-                            </TypographyLead>
-                            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+
+                {/* Hero Section */}
+                <section className="w-full py-20 lg:py-40">
+                    <div className="container mx-auto">
+                        <div className="flex gap-8 items-center justify-center flex-col">
+                            <div>
                                 <Button
-                                    size="lg"
-                                    onClick={() => {
-                                        window.location.href =
+                                    variant="secondary"
+                                    size="sm"
+                                    className="gap-4"
+                                    onClick={() =>
+                                        window.open(
                                             process.env
-                                                .NEXT_PUBLIC_STORYBOOK_URL +
-                                            '?path=/docs/introduction-introduction--docs'
-                                    }}
+                                                .NEXT_PUBLIC_STORYBOOK_URL,
+                                            '_blank',
+                                        )
+                                    }
                                 >
-                                    View Stories
+                                    Explore our components{' '}
+                                    <MoveRight className="w-4 h-4" />
                                 </Button>
                             </div>
-                            <div className="w-full max-w-sm mx-auto mb-8">
-                                <MultiStepLoader
-                                    loadingStates={steps}
-                                    loading={showLoader}
-                                    duration={1500}
-                                />
+                            <div className="flex gap-4 flex-col">
+                                <h1 className="text-5xl md:text-7xl max-w-2xl tracking-tighter text-center font-regular">
+                                    <span className="text-primary">
+                                        RealCube 2.0 is
+                                    </span>
+                                    <span className="relative flex w-full justify-center overflow-hidden text-center md:pb-4 md:pt-1">
+                                        &nbsp;
+                                        {titles.map((title, index) => (
+                                            <motion.span
+                                                key={index}
+                                                className="absolute font-semibold"
+                                                initial={{
+                                                    opacity: 0,
+                                                    y: '-100',
+                                                }}
+                                                transition={{
+                                                    type: 'spring',
+                                                    stiffness: 50,
+                                                }}
+                                                animate={
+                                                    titleNumber === index
+                                                        ? { y: 0, opacity: 1 }
+                                                        : {
+                                                              y:
+                                                                  titleNumber >
+                                                                  index
+                                                                      ? -150
+                                                                      : 150,
+                                                              opacity: 0,
+                                                          }
+                                                }
+                                            >
+                                                {title}
+                                            </motion.span>
+                                        ))}
+                                    </span>
+                                </h1>
+                                <TypographyLead className="text-lg md:text-xl leading-relaxed tracking-tight text-muted-foreground max-w-2xl text-center">
+                                    Elevate your design workflow with RealCube
+                                    2.0. Our comprehensive design system
+                                    streamlines development, ensuring
+                                    consistency and accessibility across all
+                                    your projects.
+                                </TypographyLead>
                             </div>
-                            <TypographyLarge className="font-medium">
-                                Featuring{' '}
-                                <FlipWords
-                                    words={[
-                                        '100+ Components',
-                                        'WCAG Compliance',
-                                        'Customizable Themes',
-                                    ]}
-                                />
-                            </TypographyLarge>
-                        </div>
-                    </section>
-                    <section id="why-design-system" className="py-16 md:py-24">
-                        <div className="container">
-                            <TypographyH2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-center mb-12">
-                                Why We Need a Design System
-                            </TypographyH2>
-                            <div className="grid gap-8 md:grid-cols-3">
-                                <Card>
-                                    <CardHeader>
-                                        <Puzzle className="w-10 h-10 mb-3 text-primary" />
-                                        <CardTitle>
-                                            Consistency at Scale
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <TypographyP>
-                                            A design system ensures visual and
-                                            functional consistency across all
-                                            touchpoints of your real estate
-                                            platform, from property listings to
-                                            user dashboards.
-                                        </TypographyP>
-                                    </CardContent>
-                                </Card>
-                                <Card>
-                                    <CardHeader>
-                                        <Zap className="w-10 h-10 mb-3 text-primary" />
-                                        <CardTitle>
-                                            Accelerated Development
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <TypographyP>
-                                            With pre-built, tested components,
-                                            developers can focus on building
-                                            features rather than reinventing the
-                                            wheel, significantly speeding up the
-                                            development process.
-                                        </TypographyP>
-                                    </CardContent>
-                                </Card>
-                                <Card>
-                                    <CardHeader>
-                                        <Lightbulb className="w-10 h-10 mb-3 text-primary" />
-                                        <CardTitle>Improved UX</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <TypographyP>
-                                            By standardizing UI elements and
-                                            interactions, we create a more
-                                            intuitive and learnable interface
-                                            for users, enhancing their overall
-                                            experience with your real estate
-                                            platform.
-                                        </TypographyP>
-                                    </CardContent>
-                                </Card>
+                            <div className="flex flex-row gap-3">
+                                <div className="flex flex-row gap-3">
+                                    <Button
+                                        size="lg"
+                                        className="gap-4"
+                                        onClick={() =>
+                                            window.open(
+                                                'https://miro.com/app/board/uXjVLTOkSSA=/?share_link_id=768981108472',
+                                                '_blank',
+                                            )
+                                        }
+                                    >
+                                        View Process{' '}
+                                        <MoveRight className="w-4 h-4" />
+                                    </Button>
+                                </div>
                             </div>
                         </div>
-                    </section>
-                    <section id="features" className="py-16 md:py-24">
-                        <div className="container">
-                            <TypographyH2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-center mb-12">
-                                Key Features
-                            </TypographyH2>
-                            <div className="h-[30rem] flex items-center justify-center w-full">
-                                <CardStackDemo></CardStackDemo>
-                            </div>
-                        </div>
-                    </section>
+                    </div>
+                </section>
 
-                    <section
-                        id="typography"
-                        className="w-full py-16 md:py-24 lg:py-32 bg-background"
-                    >
-                        <div className="container px-4 md:px-6">
-                            <TypographyH1 className="text-center mb-8">
-                                Typography
-                            </TypographyH1>
-                            <TextGenerateEffect
-                                className="text-center mx-auto pt-2 w-[70%] text-primary font-regular"
-                                words={words}
-                            />
-
-                            <div className="mt-12">
-                                <StickyScroll content={content} />
+                {/* Stats Section */}
+                <section className="w-full py-20 lg:py-40 bg-card">
+                    <div className="container mx-auto">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                            <div className="flex gap-4 flex-col items-start">
+                                <Badge>Impact</Badge>
+                                <div className="flex gap-2 flex-col">
+                                    <TypographyH2 className="text-xl md:text-3xl md:text-5xl tracking-tighter lg:max-w-xl font-regular text-left">
+                                        Transforming design workflows
+                                    </TypographyH2>
+                                    <TypographyP className="text-lg lg:max-w-sm leading-relaxed tracking-tight text-muted-foreground text-left">
+                                        RealCube 2.0 is revolutionizing how
+                                        teams approach design and development.
+                                        Our comprehensive system simplifies
+                                        processes, enhances consistency, and
+                                        boosts productivity across projects of
+                                        all sizes.
+                                    </TypographyP>
+                                </div>
                             </div>
-                        </div>
-                    </section>
-
-                    <section id="components" className="py-16 md:py-24">
-                        <div className="container">
-                            <TypographyH2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-center mb-12">
-                                Component Showcase
-                            </TypographyH2>
-                            <Tabs defaultValue="data" className="w-full">
-                                <TabsList className="grid w-full grid-cols-6 mb-8">
-                                    <TabsTrigger value="data">
-                                        Data Display
-                                    </TabsTrigger>
-                                    <TabsTrigger value="input">
-                                        Input
-                                    </TabsTrigger>
-                                    <TabsTrigger value="feedback">
-                                        Feedback
-                                    </TabsTrigger>
-                                    <TabsTrigger value="layout">
-                                        Layout
-                                    </TabsTrigger>
-                                    <TabsTrigger value="advanced">
-                                        Advanced
-                                    </TabsTrigger>
-                                    <TabsTrigger value="actions">
-                                        Actions
-                                    </TabsTrigger>
-                                </TabsList>
-                                {/* Data Display Tab */}
-                                <TabsContent value="data">
-                                    <div className="grid gap-8 lg:grid-cols-2">
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle>
-                                                    Data Table
-                                                </CardTitle>
-                                                <CardDescription>
-                                                    Powerful data grid with
-                                                    sorting and filtering
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <Table>
-                                                    <TableHeader>
-                                                        <TableRow>
-                                                            <TableHead>
-                                                                Property
-                                                            </TableHead>
-                                                            <TableHead>
-                                                                Location
-                                                            </TableHead>
-                                                            <TableHead>
-                                                                Price
-                                                            </TableHead>
-                                                            <TableHead>
-                                                                Status
-                                                            </TableHead>
-                                                        </TableRow>
-                                                    </TableHeader>
-                                                    <TableBody>
-                                                        <TableRow>
-                                                            <TableCell>
-                                                                Sunset Villa
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                Miami, FL
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                $1,200,000
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <Badge>
-                                                                    Available
-                                                                </Badge>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                        <TableRow>
-                                                            <TableCell>
-                                                                Ocean View Condo
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                Malibu, CA
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                $2,500,000
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                <Badge variant="secondary">
-                                                                    Pending
-                                                                </Badge>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    </TableBody>
-                                                </Table>
-                                            </CardContent>
-                                        </Card>
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle>Accordion</CardTitle>
-                                                <CardDescription>
-                                                    Expandable content sections
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <Accordion
-                                                    type="single"
-                                                    collapsible
+                            <div className="flex justify-center items-center">
+                                <div className="grid text-left grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 w-full gap-4">
+                                    {[
+                                        {
+                                            icon: (
+                                                <Code className="w-6 h-6 mb-4 text-primary" />
+                                            ),
+                                            count: '100+',
+                                            label: 'Components',
+                                            description:
+                                                'Ready-to-use, customizable UI elements',
+                                        },
+                                        {
+                                            icon: (
+                                                <MoveUpRight className="w-6 h-6 mb-4 text-primary" />
+                                            ),
+                                            count: '50%',
+                                            label: 'Faster Development',
+                                            description:
+                                                'Development time reduction',
+                                        },
+                                        {
+                                            icon: (
+                                                <CheckCheck className="w-6 h-6 mb-4 text-primary" />
+                                            ),
+                                            count: 'WCAG 2.1',
+                                            label: 'Compliant',
+                                            description:
+                                                'Ensuring accessibility for all users',
+                                        },
+                                        {
+                                            icon: (
+                                                <Paintbrush className="w-6 h-6 mb-4 text-primary" />
+                                            ),
+                                            count: 'Adaptable',
+                                            label: 'Design System',
+                                            description:
+                                                'Adapts to different products and needs',
+                                        },
+                                    ].map((item, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex flex-col justify-between p-6 border rounded-md hover:shadow-lg transition-shadow"
+                                        >
+                                            {item.icon}
+                                            <div className="flex flex-col items-baseline gap-2">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="text-xs font-medium px-2 py-1"
                                                 >
-                                                    <AccordionItem value="item-1">
-                                                        <AccordionTrigger>
-                                                            Is it accessible?
-                                                        </AccordionTrigger>
-                                                        <AccordionContent>
-                                                            Yes. All components
-                                                            follow WAI-ARIA
-                                                            guidelines for
-                                                            maximum
-                                                            accessibility.
-                                                        </AccordionContent>
-                                                    </AccordionItem>
-                                                    <AccordionItem value="item-2">
-                                                        <AccordionTrigger>
-                                                            Is it customizable?
-                                                        </AccordionTrigger>
-                                                        <AccordionContent>
-                                                            Absolutely. Use
-                                                            Tailwind CSS or CSS
-                                                            variables to
-                                                            customize the look
-                                                            and feel to match
-                                                            your brand.
-                                                        </AccordionContent>
-                                                    </AccordionItem>
-                                                </Accordion>
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-                                </TabsContent>
-                                {/* Input Tab */}
-                                <TabsContent value="input">
-                                    <div className="grid gap-8 lg:grid-cols-2">
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle>Slider</CardTitle>
-                                                <CardDescription>
-                                                    Intuitive range selection
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <Slider
-                                                    defaultValue={[33]}
-                                                    max={100}
-                                                    step={1}
-                                                />
-                                            </CardContent>
-                                        </Card>
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle>Switch</CardTitle>
-                                                <CardDescription>
-                                                    Toggle between two states
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent className="flex items-center space-x-2">
-                                                <Switch id="airplane-mode" />
-                                                <Label htmlFor="airplane-mode">
-                                                    Airplane Mode
-                                                </Label>
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-                                </TabsContent>
-                                {/* Feedback Tab */}
-                                <TabsContent value="feedback">
-                                    <div className="grid gap-8 lg:grid-cols-2">
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle>Progress</CardTitle>
-                                                <CardDescription>
-                                                    Visual indicator of progress
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <Progress
-                                                    value={33}
-                                                    className="w-full"
-                                                />
-                                            </CardContent>
-                                        </Card>
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle>Alert</CardTitle>
-                                                <CardDescription>
-                                                    Informative messages for
-                                                    users
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <Alert>
-                                                    <AlertTriangle className="h-4 w-4" />
-                                                    <AlertTitle>
-                                                        Warning
-                                                    </AlertTitle>
-                                                    <AlertDescription>
-                                                        This action cannot be
-                                                        undone.
-                                                    </AlertDescription>
-                                                </Alert>
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-                                </TabsContent>
-                                {/* Layout Tab */}
-                                <TabsContent value="layout">
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle>Separator</CardTitle>
-                                            <CardDescription>
-                                                A horizontal or vertical
-                                                separator line
-                                            </CardDescription>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <div className="space-y-1">
-                                                <TypographyH4>
-                                                    Radix Primitives
-                                                </TypographyH4>
-                                                <TypographyMuted>
-                                                    An open-source UI component
-                                                    library.
-                                                </TypographyMuted>
+                                                    {item.label}
+                                                </Badge>
+                                                <h2 className="text-4xl tracking-tighter font-semibold text-left">
+                                                    {item.count}
+                                                </h2>
                                             </div>
-                                            <Separator className="my-4" />
-                                            <div className="flex h-5 items-center space-x-4 text-sm">
-                                                <div>Blog</div>
-                                                <Separator orientation="vertical" />
-                                                <div>Docs</div>
-                                                <Separator orientation="vertical" />
-                                                <div>Source</div>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </TabsContent>
-                                {/* Advanced Tab */}
-                                <TabsContent value="advanced">
-                                    <div className="grid gap-8 lg:grid-cols-2">
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle>Calendar</CardTitle>
-                                                <CardDescription>
-                                                    A date picker with range
-                                                    selection
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent>
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                        <Button
-                                                            variant={'outline'}
-                                                            className={cn(
-                                                                'w-[280px] justify-start text-left font-normal',
-                                                                !date &&
-                                                                    'text-muted-foreground',
-                                                            )}
-                                                        >
-                                                            <CalendarIcon className="mr-2 h-4 w-4" />
-                                                            {date ? (
-                                                                format(
-                                                                    date,
-                                                                    'PPP',
-                                                                )
-                                                            ) : (
-                                                                <span>
-                                                                    Pick a date
-                                                                </span>
-                                                            )}
-                                                        </Button>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className="w-auto p-0">
-                                                        <Calendar
-                                                            mode="single"
-                                                            selected={date}
-                                                            onSelect={setDate}
-                                                            initialFocus
-                                                        />
-                                                    </PopoverContent>
-                                                </Popover>
-                                            </CardContent>
-                                        </Card>
-                                        <Card>
-                                            <CardHeader>
-                                                <CardTitle>Avatar</CardTitle>
-                                                <CardDescription>
-                                                    A visual representation of a
-                                                    user
-                                                </CardDescription>
-                                            </CardHeader>
-                                            <CardContent className="flex space-x-4">
-                                                <Avatar>
-                                                    <AvatarImage
-                                                        src="https://github.com/shadcn.png"
-                                                        alt="@shadcn"
-                                                    />
-                                                    <AvatarFallback>
-                                                        CN
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <Avatar>
-                                                    <AvatarImage
-                                                        src="https://github.com/vercel.png"
-                                                        alt="@vercel"
-                                                    />
-                                                    <AvatarFallback>
-                                                        VC
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <Avatar>
-                                                    <AvatarFallback>
-                                                        JD
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-                                </TabsContent>
-                                {/* Actions Tab */}
-                                <TabsContent value="actions">
-                                    <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-                                        <Button
-                                            size="lg"
-                                            onClick={() =>
-                                                setShowLoader(!showLoader)
-                                            }
-                                        >
-                                            {showLoader
-                                                ? 'Hide Loader'
-                                                : 'Show Loader'}
-                                        </Button>
-                                        <Button
-                                            size="lg"
-                                            variant="outline"
-                                            onClick={showToast}
-                                        >
-                                            Try Toast
-                                        </Button>
-                                    </div>
-                                    {showLoader && (
-                                        <div className="max-w-lg mx-auto">
-                                            <MultiStepLoader
-                                                loadingStates={steps}
-                                            />
+                                            <p className="mt-2 text-base leading-relaxed tracking-tight text-muted-foreground max-w-xl text-left">
+                                                {item.description}
+                                            </p>
                                         </div>
-                                    )}
-                                </TabsContent>
-                            </Tabs>
-                        </div>
-                    </section>
-
-                    <section
-                        id="color-palette-and-alerts"
-                        className="w-full py-12 md:py-24 lg:py-32"
-                    >
-                        <div className="container px-4 md:px-6">
-                            <TypographyH2 className="tracking-tighter sm:text-4xl md:text-5xl mb-8 text-center">
-                                Color Palette & Alerts
-                            </TypographyH2>
-                            <div className="grid gap-6 lg:grid-cols-2">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Color Palette</CardTitle>
-                                        <CardDescription>
-                                            Our design system&apos;s
-                                            comprehensive color scheme,
-                                            organized into categories.
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        {/* Background Colors */}
-                                        <div className="mb-6 mt-6">
-                                            <TypographyH4>
-                                                Background Colors
-                                            </TypographyH4>
-                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                                                <ColorSwatch
-                                                    name="Background"
-                                                    color="bg-background"
-                                                    textColor="text-foreground"
-                                                />
-                                                <ColorSwatch
-                                                    name="Foreground"
-                                                    color="bg-foreground"
-                                                    textColor="text-background"
-                                                />
-                                                <ColorSwatch
-                                                    name="Card"
-                                                    color="bg-card"
-                                                    textColor="text-card-foreground"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Primary and Secondary Colors */}
-                                        <div className="mb-6 mt-6">
-                                            <TypographyH4>
-                                                Primary & Secondary Colors
-                                            </TypographyH4>
-                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                                                <ColorSwatch
-                                                    name="Primary"
-                                                    color="bg-primary"
-                                                    textColor="text-primary-foreground"
-                                                />
-                                                <ColorSwatch
-                                                    name="Secondary"
-                                                    color="bg-secondary"
-                                                    textColor="text-secondary-foreground"
-                                                />
-                                                <ColorSwatch
-                                                    name="Accent"
-                                                    color="bg-accent"
-                                                    textColor="text-accent-foreground"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Utility Colors */}
-                                        <div className="mb-6 mt-6">
-                                            <TypographyH4>
-                                                Utility Colors
-                                            </TypographyH4>
-                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                                                <ColorSwatch
-                                                    name="Muted"
-                                                    color="bg-muted"
-                                                    textColor="text-muted-foreground"
-                                                />
-                                                <ColorSwatch
-                                                    name="Destructive"
-                                                    color="bg-destructive"
-                                                    textColor="text-destructive-foreground"
-                                                />
-                                                <ColorSwatch
-                                                    name="Success"
-                                                    color="bg-success"
-                                                    textColor="text-success-foreground"
-                                                />
-                                                <ColorSwatch
-                                                    name="Warning"
-                                                    color="bg-warning"
-                                                    textColor="text-warning-foreground"
-                                                />
-                                                <ColorSwatch
-                                                    name="Info"
-                                                    color="bg-info"
-                                                    textColor="text-info-foreground"
-                                                />
-                                                <ColorSwatch
-                                                    name="Action"
-                                                    color="bg-action"
-                                                    textColor="text-action-foreground"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Chart Colors */}
-                                        <div className="mb-6 mt-6">
-                                            <TypographyH4>
-                                                Chart Colors
-                                            </TypographyH4>
-                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                                                <ColorSwatch
-                                                    name="Chart 1"
-                                                    color="bg-[hsl(var(--chart-1))]"
-                                                    textColor="text-foreground"
-                                                />
-                                                <ColorSwatch
-                                                    name="Chart 2"
-                                                    color="bg-[hsl(var(--chart-2))]"
-                                                    textColor="text-foreground"
-                                                />
-                                                <ColorSwatch
-                                                    name="Chart 3"
-                                                    color="bg-[hsl(var(--chart-3))]"
-                                                    textColor="text-foreground"
-                                                />
-                                                <ColorSwatch
-                                                    name="Chart 4"
-                                                    color="bg-[hsl(var(--chart-4))]"
-                                                    textColor="text-foreground"
-                                                />
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Alert Types</CardTitle>
-                                        <CardDescription>
-                                            Various alert styles for different
-                                            scenarios.
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="space-y-4">
-                                        <Alert>
-                                            <Info className="h-4 w-4" />
-                                            <AlertTitle>Information</AlertTitle>
-                                            <AlertDescription>
-                                                This is an information alert.
-                                            </AlertDescription>
-                                        </Alert>
-                                        <Alert variant="failure">
-                                            <AlertTriangle className="h-4 w-4" />
-                                            <AlertTitle>Error</AlertTitle>
-                                            <AlertDescription>
-                                                This is an error alert.
-                                            </AlertDescription>
-                                        </Alert>
-                                        <Alert variant="warning">
-                                            <AlertTriangle className="h-4 w-4" />
-                                            <AlertTitle>Warning</AlertTitle>
-                                            <AlertDescription>
-                                                This is a warning alert.
-                                            </AlertDescription>
-                                        </Alert>
-                                        <Alert variant="success">
-                                            <CheckCircle className="h-4 w-4" />
-                                            <AlertTitle>Success</AlertTitle>
-                                            <AlertDescription>
-                                                This is a success alert.
-                                            </AlertDescription>
-                                        </Alert>
-                                        <Alert variant="info">
-                                            <Info className="h-4 w-4" />
-                                            <AlertTitle>Info</AlertTitle>
-                                            <AlertDescription>
-                                                This is an info alert.
-                                            </AlertDescription>
-                                        </Alert>
-                                    </CardContent>
-                                </Card>
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                    </section>
-                </main>
-                <footer className="py-6 bg-background border-t">
-                    <div className="container">
-                        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-                            <TypographyMuted className="text-center md:text-left">
-                                © 2024 RealCube Design System. All rights
-                                reserved.
-                            </TypographyMuted>
-                            <nav className="flex items-center gap-4">
-                                <a
-                                    className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
-                                    href="#"
-                                >
-                                    Terms
-                                </a>
-                                <a
-                                    className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
-                                    href="#"
-                                >
-                                    Privacy
-                                </a>
-                                <a
-                                    className="text-sm font-medium transition-colors hover:text-foreground/80 text-foreground/60"
-                                    href="#"
-                                >
-                                    Accessibility
-                                </a>
-                            </nav>
+                    </div>
+                </section>
+
+                {/* Features Section */}
+                <section className="w-full py-20 lg:py-40">
+                    <div className="container mx-auto">
+                        <div className="flex gap-4 flex-col items-start">
+                            <Badge>Features</Badge>
+                            <div className="flex gap-2 flex-col">
+                                <TypographyH2 className="text-3xl md:text-5xl tracking-tighter lg:max-w-xl font-regular">
+                                    Why choose RealCube 2.0?
+                                </TypographyH2>
+                                <TypographyP className="text-lg max-w-xl lg:max-w-xl leading-relaxed tracking-tight text-muted-foreground">
+                                    Our design system is built to empower your
+                                    team and streamline your workflow.
+                                </TypographyP>
+                            </div>
+                            <div className="flex gap-10 pt-12 flex-col w-full">
+                                <div className="grid grid-cols-2 items-start lg:grid-cols-3 gap-10">
+                                    <div className="flex flex-row gap-6 w-full items-start">
+                                        <Check className="w-4 h-4 mt-2 text-primary" />
+                                        <div className="flex flex-col gap-1">
+                                            <p>
+                                                Comprehensive Component Library
+                                            </p>
+                                            <p className="text-muted-foreground text-sm">
+                                                100+ customizable, ready-to-use
+                                                components.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-row gap-6 items-start">
+                                        <Check className="w-4 h-4 mt-2 text-primary" />
+                                        <div className="flex flex-col gap-1">
+                                            <p>Accessibility First</p>
+                                            <p className="text-muted-foreground text-sm">
+                                                WCAG 2.1 AA compliant out of the
+                                                box.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-row gap-6 items-start">
+                                        <Check className="w-4 h-4 mt-2 text-primary" />
+                                        <div className="flex flex-col gap-1">
+                                            <p>Flexible Theming</p>
+                                            <p className="text-muted-foreground text-sm">
+                                                Easily customize to match your
+                                                brand.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-row gap-6 w-full items-start">
+                                        <Check className="w-4 h-4 mt-2 text-primary" />
+                                        <div className="flex flex-col gap-1">
+                                            <p>Responsive Design</p>
+                                            <p className="text-muted-foreground text-sm">
+                                                Optimized for all screen sizes
+                                                and devices.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-row gap-6 items-start">
+                                        <Check className="w-4 h-4 mt-2 text-primary" />
+                                        <div className="flex flex-col gap-1">
+                                            <p>Developer Friendly</p>
+                                            <p className="text-muted-foreground text-sm">
+                                                Built with modern web
+                                                technologies.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-row gap-6 items-start">
+                                        <Check className="w-4 h-4 mt-2 text-primary" />
+                                        <div className="flex flex-col gap-1">
+                                            <p>Regular Updates</p>
+                                            <p className="text-muted-foreground text-sm">
+                                                Continuous improvements and new
+                                                features.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                </section>
+
+                {/* Trusted By Section */}
+                <section className="w-full py-20 lg:py-40 bg-background">
+                    <div className="container mx-auto">
+                        <TypographyH2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+                            RealCube 2.0 Component Library
+                        </TypographyH2>
+                        <TypographyP className="text-center mb-12 text-muted-foreground">
+                            Explore our comprehensive set of customizable,
+                            accessible components
+                        </TypographyP>
+
+                        <div className="mb-0">
+                            <Carousel
+                                setApi={setCarouselApi}
+                                className="w-full"
+                            >
+                                <CarouselContent>
+                                    {componentCategories.map(
+                                        (category, index) => (
+                                            <CarouselItem
+                                                key={index}
+                                                className="basis-1/2 md:basis-1/3 lg:basis-1/5"
+                                            >
+                                                <div className="flex flex-col items-center justify-center p-4 bg-card rounded-lg h-32">
+                                                    {category.icon}
+                                                    <span className="mt-2 text-sm font-semibold">
+                                                        {category.name}
+                                                    </span>
+                                                </div>
+                                            </CarouselItem>
+                                        ),
+                                    )}
+                                </CarouselContent>
+                                <CarouselPrevious />
+                                <CarouselNext />
+                            </Carousel>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="w-full py-20 lg:py-40 bg-background">
+                    <div className="container mx-auto">
+                        <Badge>Component Showcase</Badge>
+                        <TypographyH2 className="text-3xl md:text-5xl tracking-tighter lg:max-w-xl font-regular mt-4">
+                            Explore Essential UI Components
+                        </TypographyH2>
+                        <TypographyP className="text-lg max-w-2xl leading-relaxed tracking-tight text-muted-foreground mt-4">
+                            Our library includes versatile components that
+                            elevate your projects.
+                        </TypographyP>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                            {/* Button Component */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Button</CardTitle>
+                                    <CardDescription>
+                                        Interactive button component with
+                                        variants
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="flex flex-wrap gap-2">
+                                    <Button variant="default">Default</Button>
+                                    <Button variant="secondary">
+                                        Secondary
+                                    </Button>
+                                    <Button variant="outline">Outline</Button>
+                                    <Button variant="ghost">Ghost</Button>
+                                </CardContent>
+                            </Card>
+
+                            {/* Input Component */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Input</CardTitle>
+                                    <CardDescription>
+                                        Flexible input component for various
+                                        data types
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <Input type="email" placeholder="Email" />
+                                </CardContent>
+                            </Card>
+
+                            {/* Tabs Component */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Tabs</CardTitle>
+                                    <CardDescription>
+                                        Organize content into separate views
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <Tabs defaultValue="account">
+                                        <TabsList>
+                                            <TabsTrigger value="account">
+                                                Account
+                                            </TabsTrigger>
+                                            <TabsTrigger value="password">
+                                                Password
+                                            </TabsTrigger>
+                                        </TabsList>
+                                        <TabsContent value="account">
+                                            Account settings
+                                        </TabsContent>
+                                        <TabsContent value="password">
+                                            Change password
+                                        </TabsContent>
+                                    </Tabs>
+                                </CardContent>
+                            </Card>
+
+                            {/* Checkbox Component */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Checkbox</CardTitle>
+                                    <CardDescription>
+                                        Selectable input for multiple options
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="flex items-center space-x-2">
+                                    <Checkbox id="terms" />
+                                    <Label htmlFor="terms">
+                                        Accept terms and conditions
+                                    </Label>
+                                </CardContent>
+                            </Card>
+
+                            {/* Radio Group Component */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Radio Group</CardTitle>
+                                    <CardDescription>
+                                        Select a single option from a set
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent></CardContent>
+                            </Card>
+
+                            {/* Select Component */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Select</CardTitle>
+                                    <CardDescription>
+                                        Dropdown selection component
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <Select>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a fruit" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="apple">
+                                                Apple
+                                            </SelectItem>
+                                            <SelectItem value="banana">
+                                                Banana
+                                            </SelectItem>
+                                            <SelectItem value="orange">
+                                                Orange
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </CardContent>
+                            </Card>
+
+                            {/* Slider Component */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Slider</CardTitle>
+                                    <CardDescription>
+                                        Select a value from a range
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <Slider
+                                        defaultValue={[50]}
+                                        max={100}
+                                        step={1}
+                                    />
+                                </CardContent>
+                            </Card>
+
+                            {/* Switch Component */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Switch</CardTitle>
+                                    <CardDescription>
+                                        Toggle between two states
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="flex items-center space-x-2">
+                                    <Switch id="airplane-mode" />
+                                    <Label htmlFor="airplane-mode">
+                                        Airplane Mode
+                                    </Label>
+                                </CardContent>
+                            </Card>
+
+                            {/* Badge Component */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Badge</CardTitle>
+                                    <CardDescription>
+                                        Small status descriptors
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="flex flex-wrap gap-2">
+                                    <Badge>Default</Badge>
+                                    <Badge variant="secondary">Secondary</Badge>
+                                    <Badge variant="outline">Outline</Badge>
+                                    <Badge variant="destructive">
+                                        Destructive
+                                    </Badge>
+                                </CardContent>
+                            </Card>
+
+                            {/* Avatar Component */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Avatar</CardTitle>
+                                    <CardDescription>
+                                        Visual representation of a user
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="flex space-x-4">
+                                    <Avatar>
+                                        <AvatarImage
+                                            src="https://github.com/shadcn.png"
+                                            alt="@shadcn"
+                                        />
+                                        <AvatarFallback>CN</AvatarFallback>
+                                    </Avatar>
+                                    <Avatar>
+                                        <AvatarImage
+                                            src="https://github.com/vercel.png"
+                                            alt="@vercel"
+                                        />
+                                        <AvatarFallback>VC</AvatarFallback>
+                                    </Avatar>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        <div className="mt-12 text-center">
+                            <Button
+                                size="lg"
+                                onClick={() =>
+                                    window.open(
+                                        process.env.NEXT_PUBLIC_STORYBOOK_URL,
+                                        '_blank',
+                                    )
+                                }
+                            >
+                                Explore All Components
+                            </Button>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Color Palette Section */}
+                <section className="w-full py-20 lg:py-40">
+                    <div className="container mx-auto">
+                        <Badge>Color System</Badge>
+                        <TypographyH2 className="text-3xl md:text-5xl tracking-tighter lg:max-w-xl font-regular mt-4">
+                            Harmonious and Accessible Color Palette
+                        </TypographyH2>
+                        <TypographyP className="text-lg max-w-2xl leading-relaxed tracking-tight text-muted-foreground mt-4">
+                            Our carefully crafted color system ensures
+                            consistency, accessibility, and flexibility across
+                            all your projects.
+                        </TypographyP>
+                        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-8 mt-12">
+                            <ColorSwatch name="Primary" color="bg-primary" />
+                            <ColorSwatch
+                                name="Secondary"
+                                color="bg-secondary"
+                            />
+                            <ColorSwatch name="Accent" color="bg-accent" />
+                            <ColorSwatch name="Muted" color="bg-muted" />
+                            <ColorSwatch name="Card" color="bg-card" />
+                            <ColorSwatch
+                                name="Destructive"
+                                color="bg-destructive"
+                            />
+                            <ColorSwatch name="Success" color="bg-success" />
+                            <ColorSwatch name="Warning" color="bg-warning" />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Typography Section */}
+                <section className="w-full py-20 lg:py-40 bg-card">
+                    <div className="container mx-auto">
+                        <Badge>Typography</Badge>
+                        <TypographyH2 className="text-3xl md:text-5xl tracking-tighter lg:max-w-xl font-regular mt-4">
+                            Clear and Consistent Typography with Poppins
+                        </TypographyH2>
+                        <TypographyP className="text-lg max-w-2xl leading-relaxed tracking-tight text-muted-foreground mt-4">
+                            Our typography system is designed for readability
+                            and scalability across all devices and platforms.
+                        </TypographyP>
+                        <div className="mt-12 space-y-8">
+                            <div>
+                                <TypographyH1>Heading 1</TypographyH1>
+                                <TypographySmall className="text-muted-foreground">
+                                    Used for main page titles
+                                </TypographySmall>
+                            </div>
+                            <div>
+                                <TypographyH2>Heading 2</TypographyH2>
+                                <TypographySmall className="text-muted-foreground">
+                                    Used for section headers
+                                </TypographySmall>
+                            </div>
+                            <div>
+                                <TypographyH3>Heading 3</TypographyH3>
+                                <TypographySmall className="text-muted-foreground">
+                                    Used for subsection headers
+                                </TypographySmall>
+                            </div>
+                            <div>
+                                <TypographyP>Body Text</TypographyP>
+                                <TypographySmall className="text-muted-foreground">
+                                    Used for main content
+                                </TypographySmall>
+                            </div>
+                            <div>
+                                <TypographySmall>Small Text</TypographySmall>
+                                <br></br>
+                                <TypographySmall className="text-muted-foreground">
+                                    Used for captions and helper text
+                                </TypographySmall>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section className="w-full py-20 lg:py-40 bg-background">
+                    <div className="container mx-auto">
+                        <div className="grid lg:grid-cols-2 gap-10">
+                            <div>
+                                <Badge variant="outline">FAQ</Badge>
+                                <TypographyH2 className="text-3xl md:text-5xl tracking-tighter font-regular mt-4">
+                                    Frequently Asked Questions
+                                </TypographyH2>
+                                <TypographyP className="text-lg max-w-lg leading-relaxed tracking-tight text-muted-foreground mt-4">
+                                    Get answers to common questions about
+                                    RealCube 2.0 Design System and how it can
+                                    benefit your projects.
+                                </TypographyP>
+                                <Button
+                                    className="gap-4 mt-4"
+                                    variant="outline"
+                                >
+                                    Contact Support{' '}
+                                    <PhoneCall className="w-4 h-4" />
+                                </Button>
+                            </div>
+                            <Accordion
+                                type="single"
+                                collapsible
+                                className="w-full"
+                            >
+                                <AccordionItem value="item-1">
+                                    <AccordionTrigger>
+                                        What is RealCube 2.0 Design System?
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        RealCube 2.0 is a comprehensive design
+                                        system that provides a set of reusable
+                                        components, guidelines, and tools to
+                                        create consistent and accessible user
+                                        interfaces for web applications.
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="item-2">
+                                    <AccordionTrigger>
+                                        How does RealCube 2.0 ensure
+                                        accessibility?
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        All components in RealCube 2.0 are
+                                        designed and tested to meet WCAG 2.1 AA
+                                        standards, ensuring that your
+                                        applications are accessible to a wide
+                                        range of users, including those with
+                                        disabilities.
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="item-3">
+                                    <AccordionTrigger>
+                                        Can I customize RealCube 2.0 to match my
+                                        brand?
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        Yes, RealCube 2.0 is highly
+                                        customizable. You can easily modify
+                                        colors, typography, and other design
+                                        tokens to align with your brand
+                                        guidelines while maintaining consistency
+                                        across your projects.
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="item-4">
+                                    <AccordionTrigger>
+                                        Is RealCube 2.0 suitable for large-scale
+                                        applications?
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        Absolutely. RealCube 2.0 is built to
+                                        scale, with performance optimizations
+                                        and a modular architecture that makes it
+                                        suitable for projects of any size, from
+                                        small websites to large enterprise
+                                        applications.
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="item-5">
+                                    <AccordionTrigger>
+                                        How often is RealCube 2.0 updated?
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        We regularly update RealCube 2.0 with
+                                        new features, components, and
+                                        improvements. Our team is committed to
+                                        keeping the design system current with
+                                        the latest web standards and best
+                                        practices.
+                                    </AccordionContent>
+                                </AccordionItem>
+                            </Accordion>
+                        </div>
+                    </div>
+                </section>
+
+                {/* CTA Section */}
+                <section className="w-full py-20 lg:py-40 bg-primary text-primary-foreground">
+                    <div className="container mx-auto text-center">
+                        <TypographyH2 className="text-3xl md:text-5xl tracking-tighter font-regular mb-4">
+                            Ready to elevate your design workflow?
+                        </TypographyH2>
+                        <TypographyP className="text-xl max-w-2xl mx-auto mb-8">
+                            Start building beautiful, accessible, and consistent
+                            user interfaces with RealCube 2.0 Design System
+                            today.
+                        </TypographyP>
+                        <div className="flex flex-col sm:flex-row justify-center gap-4">
+                            <Button size="lg" variant="secondary">
+                                View Storybook
+                            </Button>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Footer */}
+                <footer className="w-full py-12 bg-background border-t">
+                    <div className="container mx-auto grid gap-8 lg:grid-cols-3">
+                        <div>
+                            <TypographyH3 className="text-lg font-semibold mb-4">
+                                RealCube Design System 2.0
+                            </TypographyH3>
+                            <TypographyP className="text-sm text-muted-foreground">
+                                Building the future of web design, one component
+                                at a time.
+                            </TypographyP>
+                        </div>
+                        <div className="grid grid-cols-2 gap-8">
+                            <div>
+                                <TypographyH4 className="text-sm font-semibold mb-4">
+                                    Resources
+                                </TypographyH4>
+                                <ul className="space-y-2">
+                                    <li>
+                                        <a
+                                            href="#"
+                                            className="text-sm text-muted-foreground hover:text-foreground"
+                                        >
+                                            Documentation
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            className="text-sm text-muted-foreground hover:text-foreground"
+                                        >
+                                            Components
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            className="text-sm text-muted-foreground hover:text-foreground"
+                                        >
+                                            Examples
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <TypographyH4 className="text-sm font-semibold mb-4">
+                                    Company
+                                </TypographyH4>
+                                <ul className="space-y-2">
+                                    <li>
+                                        <a
+                                            href="#"
+                                            className="text-sm text-muted-foreground hover:text-foreground"
+                                        >
+                                            About
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            className="text-sm text-muted-foreground hover:text-foreground"
+                                        >
+                                            Blog
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="#"
+                                            className="text-sm text-muted-foreground hover:text-foreground"
+                                        >
+                                            Careers
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <TypographyH4 className="text-sm font-semibold mb-4">
+                                Stay Updated
+                            </TypographyH4>
+                            <TypographyP className="text-sm text-muted-foreground mb-4">
+                                Subscribe to our newsletter for the latest
+                                updates and features.
+                            </TypographyP>
+                            <div className="flex space-x-2">
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    className="flex-1 px-3 py-2 bg-background border rounded-md text-sm"
+                                />
+                                <Button>Subscribe</Button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="container mx-auto mt-8 pt-8 border-t">
+                        <TypographySmall className="text-center text-muted-foreground">
+                            © 2024 RealCube Design System. All rights reserved.
+                        </TypographySmall>
                     </div>
                 </footer>
             </div>
