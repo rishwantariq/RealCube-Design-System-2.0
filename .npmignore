@@ -1,0 +1,24 @@
+# Ignore everything by default
+*
+
+# Allow npm-package for npm publish
+!realcube-design
+
+# Exclude other development-related files
+.vscode/
+.storybook/
+.next/
+node_modules/
+dist/
+out-storybook/
+__tests__/
+*.log
+.env
+.vercel/
+.eslintrc.json
+.prettierrc.json
+jest.config.js
+jest.setup.js
+next-env.d.ts
+README.md
+public

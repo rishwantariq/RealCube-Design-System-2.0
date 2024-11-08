@@ -1,0 +1,6 @@
+{
+    "directory": "./realcube-design",
+    "delete": true,
+    "location": "top",
+    "structures": ["components", "hooks", "lib", "styles"]
+}
